@@ -1,0 +1,64 @@
+name: Release workflow for tagged versions
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  generic:
+    permissions:
+      packages: write
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+      - name: Add License aand README to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            LICENSE
+            README.md
+
+  orioledb:
+    permissions:
+      packages: write
+      contents: write
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # skipping 12, no tag for
+        pgrelease:
+          - patches16_22
+          - patches15_19
+        osrelease:
+          - rockylinux8
+          - rockylinux9
+          - fedora38
+          - fedora39
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+      - name: 'Build rpms'
+        run: |
+          docker-compose run pgbuilder
+        env:
+          GITTAG: ${{ github.ref_name }}
+          IMAGETAG: "${{ matrix.pgrelease }}-${{ matrix.osrelease }}"
+
+      - name: Add to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            orioledb/rpms/*.rpm
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
