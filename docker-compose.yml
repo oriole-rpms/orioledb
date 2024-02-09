@@ -8,6 +8,7 @@ services:
       - cd /host/orioledb && make
     environment:
       GITTAG: ${GITTAG}
+      QA_RPATHS: '2'
     #platform: linux/amd64
     volumes:
     - ./:/host
