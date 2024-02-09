@@ -48,7 +48,7 @@ BuildRequires:	postgresql%{pgmajorversion}-devel
 BuildRequires:	libcurl-devel
 
 Requires:       libzstd
-Requires:	postgresql%{pgmajorversion}
+Requires:	oriolepg%{pgmajorversion}-server
 
 
 %description
