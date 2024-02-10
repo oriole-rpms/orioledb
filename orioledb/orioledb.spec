@@ -50,6 +50,8 @@ BuildRequires:	libcurl-devel
 Requires:       libzstd
 Requires:	oriolepg%{pgmajorversion}-server
 
+Provides:	orioledb%{pgmajorversion}
+
 
 %description
 OrioleDB is a new storage engine for PostgreSQL, bringing a modern approach to database capacity, capabilities and performance to the world's most-loved database platform.
